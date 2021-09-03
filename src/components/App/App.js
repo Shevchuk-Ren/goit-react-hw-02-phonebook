@@ -1,72 +1,72 @@
 import React from 'react';
 import { v4 as uuidv4 } from 'uuid';
-console.log(`id`, uuidv4());
+import Section from '../Section';
+import Phonebook from '../Phonebook';
+import ContactList from '../ContactList';
+import Filter from '../Filter';
+import Container from '../Container';
+
 class App extends React.Component {
   state = {
-    contacts: [],
-    name: '',
-    number: '',
+    filter: '',
+    contacts: [
+      { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
+      { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
+      { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
+      { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
+    ],
   };
 
-  addNameFhoneBook = () => {
-    console.log(`Push`, this.state.name);
-  };
-
-  handleSubmitForm = evt => {
-    evt.preventDefault();
-    console.log(this.state);
-  };
-
-  handleInputChange = evt => {
+  filterContacts = evt => {
     this.setState({
-      [evt.currentTarget.name]: evt.currentTarget.value,
+      filter: evt.currentTarget.value,
     });
   };
 
-  render() {
-    const { name, number } = this.state;
-    return (
-      <div>
-        <section>
-          <h2>Phonebook</h2>
-          <form onSubmit={this.handleSubmitForm}>
-            <label>
-              Name
-              <input
-                type="text"
-                value={name}
-                name="name"
-                pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
-                title="Имя может состоять только из букв, апострофа, тире и пробелов. Например Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan и т. п."
-                required
-                onChange={this.handleInputChange}
-              />
-            </label>
-            <label>
-              Number
-              <input
-                type="tel"
-                name="number"
-                value={number}
-                pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
-                itle="Номер телефона должен состоять цифр и может содержать пробелы, тире, круглые скобки и может начинаться с +"
-                required
-                onChange={this.handleInputChange}
-              />
-            </label>
-            <button type="submit" onClick={this.addNameFhoneBook}>
-              Add contact
-            </button>
-          </form>
-        </section>
+  formSubmithanler = data => {
+    data.id = uuidv4();
+    const a = this.state.contacts.filter(contact =>
+      contact.name.includes(data.name),
+    );
+    if (a.length === 1) {
+      alert(`${a.name} is alredy in contacts.`);
+      return;
+    }
+    this.setState(prevState => ({
+      contacts: [...prevState.contacts, data],
+    }));
+  };
 
-        <section>
-          <h2>Contacts</h2>
-          <ul className="contactList">
-            <li id={uuidv4()}>{this.addNamePhonebook}</li>
-          </ul>
-        </section>
-      </div>
+  deleteContact = id => {
+    this.setState(prevState => ({
+      contacts: prevState.contacts.filter(contact => contact.id !== id),
+    }));
+  };
+
+  visibleContact = () => {
+    const { contacts, filter } = this.state;
+    return contacts.filter(contact =>
+      contact.name.toLocaleLowerCase().includes(filter.toLowerCase()),
+    );
+  };
+  render() {
+    const { filter } = this.state;
+    const visibleContact = this.visibleContact();
+
+    return (
+      <Container>
+        <Section title="Phonebook">
+          <Phonebook onSubmit={this.formSubmithanler} />
+        </Section>
+
+        <Section title="Contacts">
+          <Filter onChange={this.filterContacts} filter={filter}></Filter>
+          <ContactList
+            contacts={visibleContact}
+            onDelete={this.deleteContact}
+          ></ContactList>
+        </Section>
+      </Container>
     );
   }
 }
