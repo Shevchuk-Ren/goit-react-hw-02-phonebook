@@ -6,6 +6,7 @@ import ContactList from '../ContactList';
 import Filter from '../Filter';
 import Container from '../Container';
 
+
 class App extends React.Component {
   state = {
     filter: '',
@@ -25,13 +26,16 @@ class App extends React.Component {
 
   formSubmithanler = data => {
     data.id = uuidv4();
-    const a = this.state.contacts.filter(contact =>
-      contact.name === data.name
+    const a = this.state.contacts.find(contact =>
+      contact.name.toLowerCase() === data.name.toLowerCase()
     );
-    if (a.length === 1) {
+    
+    if (a) {
+     
       alert(`${data.name} is alredy in contacts.`);
       return;
-    }
+    };
+
     this.setState(prevState => ({
       contacts: [...prevState.contacts, data],
     }));
