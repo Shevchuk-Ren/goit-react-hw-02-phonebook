@@ -29,7 +29,7 @@ class App extends React.Component {
       contact.name.includes(data.name),
     );
     if (a.length === 1) {
-      alert(`${a.name} is alredy in contacts.`);
+      alert(`${data.name} is alredy in contacts.`);
       return;
     }
     this.setState(prevState => ({
