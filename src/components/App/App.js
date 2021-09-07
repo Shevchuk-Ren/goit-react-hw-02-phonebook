@@ -26,7 +26,7 @@ class App extends React.Component {
   formSubmithanler = data => {
     data.id = uuidv4();
     const a = this.state.contacts.filter(contact =>
-      contact.name.includes(data.name),
+      contact.name === data.name
     );
     if (a.length === 1) {
       alert(`${data.name} is alredy in contacts.`);
